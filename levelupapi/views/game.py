@@ -1,5 +1,4 @@
 """View module for handling requests about park areas"""
-from levelupapi.models import gametype
 from django.core.exceptions import ValidationError
 from rest_framework import status
 from django.http import HttpResponseServerError
@@ -19,7 +18,7 @@ class GameSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Game
         url = serializers.HyperlinkedIdentityField(
-            view_name='attraction',
+            view_name='game',
             lookup_field='id'
         )
         fields = ('id', 'url', 'title', 'maker', 'number_of_players', 'skill_level', 'gametype')
@@ -109,17 +108,17 @@ class Games(ViewSet):
             return Response({'message': ex.args[0]}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def list(self, request):
-        """Handle GET requests to park attractions resource
+        """Handle GET requests to games resource
 
         Returns:
-            Response -- JSON serialized list of park attractions
+            Response -- JSON serialized list of games
         """
         games = Game.objects.all()
 
-        # Support filtering attractions by area id
-        type = self.request.query_params.get('type', None)
-        if type is not None:
-            games = games.filter(gametype__id=type)
+        # Support filtering games by type
+        game_type = self.request.query_params.get('type', None)
+        if game_type is not None:
+            games = games.filter(gametype__id=game_type)
 
         serializer = GameSerializer(
             games, many=True, context={'request': request})

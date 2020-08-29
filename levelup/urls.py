@@ -1,16 +1,16 @@
-from django.conf.urls import url, include
+# pylint: disable=missing-module-docstring
+from django.conf.urls import include
+from django.urls import path
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
-from django.urls import path
-from levelupapi.models import *
 from levelupapi.views import register_user, login_user
-from levelupapi.views import Games, GameTypes
+from levelupapi.views import Games, GameTypes, Events
 
 # pylint: disable=invalid-name
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'games', Games, 'game')
 router.register(r'gametypes', GameTypes, 'gametype')
-# router.register(r'gamers', ParkAreas, 'parkarea')
+router.register(r'events', Events, 'event')
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
