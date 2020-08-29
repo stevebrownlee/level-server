@@ -1,0 +1,23 @@
+[
+    {
+        "model": "levelupapi.gametype",
+        "pk": 1,
+        "fields": {
+            "label": "Table top"
+        }
+    },
+    {
+        "model": "levelupapi.gametype",
+        "pk": 2,
+        "fields": {
+            "label": "Role playing"
+        }
+    },
+    {
+        "model": "levelupapi.gametype",
+        "pk": 3,
+        "fields": {
+            "label": "MMO"
+        }
+    }
+]
