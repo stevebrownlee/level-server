@@ -4,13 +4,14 @@ from django.urls import path
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from levelupapi.views import register_user, login_user
-from levelupapi.views import Games, GameTypes, Events
+from levelupapi.views import Games, GameTypes, Events, Profile
 
 # pylint: disable=invalid-name
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'games', Games, 'game')
 router.register(r'gametypes', GameTypes, 'gametype')
 router.register(r'events', Events, 'event')
+router.register(r'profile', Profile, 'profile')
 
 # Wire up our API using automatic URL routing.
 # Additionally, we include login URLs for the browsable API.
