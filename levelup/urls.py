@@ -2,7 +2,6 @@
 from django.conf.urls import include
 from django.urls import path
 from rest_framework import routers
-from rest_framework.authtoken.views import obtain_auth_token
 from levelupapi.views import register_user, login_user
 from levelupapi.views import Games, GameTypes, Events, Profile
 
@@ -19,6 +18,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('register', register_user),
     path('login', login_user),
-    path('api-token-auth', obtain_auth_token),
     path('api-auth', include('rest_framework.urls', namespace='rest_framework')),
 ]
