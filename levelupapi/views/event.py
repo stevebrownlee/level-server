@@ -1,4 +1,4 @@
-"""View module for handling requests about park areas"""
+"""View module for handling requests about events"""
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
@@ -8,7 +8,6 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
 from levelupapi.models import Game, Event, Gamer, EventGamers
-from levelupapi.views.game import GameSerializer
 
 
 class EventUserSerializer(serializers.ModelSerializer):
@@ -25,6 +24,12 @@ class EventGamerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gamer
         fields = ['user']
+
+class GameSerializer(serializers.HyperlinkedModelSerializer):
+    """JSON serializer for games"""
+    class Meta:
+        model = Game
+        fields = ('id', 'title', 'maker', 'number_of_players', 'skill_level')
 
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):
@@ -43,7 +48,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class Events(ViewSet):
-    """Level up games"""
+    """Level up events"""
 
     def create(self, request):
         """Handle POST operations for events

@@ -10,7 +10,7 @@ from levelupapi.models import Game, GameType, Gamer
 
 
 class GameSerializer(serializers.HyperlinkedModelSerializer):
-    """JSON serializer for park areas
+    """JSON serializer for games
 
     Arguments:
         serializers
@@ -32,7 +32,7 @@ class Games(ViewSet):
         """Handle POST operations
 
         Returns:
-            Response -- JSON serialized Attraction instance
+            Response -- JSON serialized game instance
         """
         gamer = Gamer.objects.get(user=request.auth.user)
 

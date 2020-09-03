@@ -7,7 +7,7 @@ from levelupapi.models import GameType
 
 
 class GameTypeSerializer(serializers.HyperlinkedModelSerializer):
-    """JSON serializer for park areas
+    """JSON serializer for game types
 
     Arguments:
         serializers
@@ -38,10 +38,10 @@ class GameTypes(ViewSet):
             return HttpResponseServerError(ex)
 
     def list(self, request):
-        """Handle GET requests to park attractions resource
+        """Handle GET requests to get all game types
 
         Returns:
-            Response -- JSON serialized list of park attractions
+            Response -- JSON serialized list of game types
         """
         gametypes = GameType.objects.all()
 
