@@ -44,7 +44,7 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             lookup_field='id'
         )
         fields = ('id', 'url', 'game', 'organizer',
-                  'description', 'date', 'time')
+                  'description', 'date', 'time', 'joined')
 
 
 class Events(ViewSet):
@@ -70,7 +70,7 @@ class Events(ViewSet):
         try:
             event.save()
             serializer = EventSerializer(event, context={'request': request})
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -131,7 +131,17 @@ class Events(ViewSet):
         Returns:
             Response -- JSON serialized list of events
         """
+        gamer = Gamer.objects.get(user=request.auth.user)
         events = Event.objects.all()
+
+        for event in events:
+            event.joined = None
+
+            try:
+                EventGamers.objects.get(event=event, gamer=gamer)
+                event.joined = True
+            except EventGamers.DoesNotExist:
+                event.joined = False
 
         # Support filtering events by game
         game = self.request.query_params.get('gameId', None)
@@ -180,6 +190,8 @@ class Events(ViewSet):
                 registration = EventGamers.objects.get(
                     event=event, gamer=gamer)
                 registration.delete()
+                return Response({}, status=status.HTTP_204_NO_CONTENT)
+
             except EventGamers.DoesNotExist:
                 return Response(
                     {'message': 'Not currently registered for event.'},
