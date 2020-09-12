@@ -82,28 +82,26 @@ class UserSerializer(serializers.ModelSerializer):
     """JSON serializer for event organizer's related Django user"""
     class Meta:
         model = User
-        fields = ('first_name', 'last_name', 'username')
+        fields = ('first_name', 'last_name', 'username',)
+
+
+class GameSerializer(serializers.ModelSerializer):
+    """JSON serializer for games"""
+
+    class Meta:
+        model = Game
+        fields = ('id', 'title', 'maker', 'gamer',
+                  'number_of_players', 'skill_level', 'gametype')
 
 
 class GamerSerializer(serializers.ModelSerializer):
     """JSON serializer for event organizer"""
     user = UserSerializer(many=False)
+    games = GameSerializer(many=True)
 
     class Meta:
         model = Gamer
-        fields = ('user', 'bio')
-
-
-class GameSerializer(serializers.HyperlinkedModelSerializer):
-    """JSON serializer for games"""
-    class Meta:
-        model = Game
-        url = serializers.HyperlinkedIdentityField(
-            view_name='game',
-            lookup_field='id'
-        )
-        fields = ('title',)
-        # fields = ('id', 'url', 'title', 'number_of_players', 'skill_level')
+        fields = ('user', 'bio', 'games',)
 
 
 class EventSerializer(serializers.HyperlinkedModelSerializer):

@@ -9,7 +9,7 @@ class Game(models.Model):
     gametype = models.ForeignKey("GameType", on_delete=models.CASCADE)
     title = models.CharField(max_length=55)
     maker = models.CharField(max_length=55)
-    gamer = models.ForeignKey(Gamer, on_delete=models.CASCADE)
+    gamer = models.ForeignKey(Gamer, on_delete=models.CASCADE, related_name="games")
     number_of_players = models.IntegerField()
     skill_level = models.IntegerField()
 

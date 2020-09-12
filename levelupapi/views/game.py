@@ -1,28 +1,11 @@
 """View module for handling requests about park areas"""
 from django.core.exceptions import ValidationError
-from rest_framework import status
 from django.http import HttpResponseServerError
+from rest_framework import status
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from rest_framework import serializers
-from rest_framework import status
 from levelupapi.models import Game, GameType, Gamer
-
-
-class GameSerializer(serializers.HyperlinkedModelSerializer):
-    """JSON serializer for games
-
-    Arguments:
-        serializers
-    """
-    class Meta:
-        model = Game
-        url = serializers.HyperlinkedIdentityField(
-            view_name='game',
-            lookup_field='id'
-        )
-        fields = ('id', 'url', 'title', 'maker', 'number_of_players', 'skill_level', 'gametype')
-        depth = 1
 
 
 class Games(ViewSet):
@@ -52,8 +35,6 @@ class Games(ViewSet):
             return Response(serializer.data)
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
-
-
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single game
@@ -123,3 +104,24 @@ class Games(ViewSet):
         serializer = GameSerializer(
             games, many=True, context={'request': request})
         return Response(serializer.data)
+
+
+
+class GamerSerializer(serializers.ModelSerializer):
+    """JSON serializer for game creator"""
+
+    class Meta:
+        model = Gamer
+        fields = ('id',)
+
+
+class GameSerializer(serializers.ModelSerializer):
+    """JSON serializer for games"""
+
+    gamer = GamerSerializer(many=False)
+
+    class Meta:
+        model = Game
+        fields = ('id', 'title', 'maker', 'gamer',
+                  'number_of_players', 'skill_level', 'gametype')
+        depth = 1
