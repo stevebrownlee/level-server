@@ -5,7 +5,7 @@ from django.db import models
 from ..models import Gamer
 
 class Game(models.Model):
-
+    """Representation of a playable game that a gamer can create"""
     gametype = models.ForeignKey("GameType", on_delete=models.CASCADE)
     title = models.CharField(max_length=55)
     maker = models.CharField(max_length=55)
@@ -14,7 +14,15 @@ class Game(models.Model):
     skill_level = models.IntegerField()
 
 @receiver(pre_save, sender=Game)
-def skill_level_validate(instance, **kwargs):
+def skill_level_validate(instance):
+    """Ensure that skill level falls within the acceptable range
+
+    Args:
+        instance (Game): Game model instance
+
+    Raises:
+        ValidationError: Specified skill level is not acceptable
+    """
     if instance.skill_level < 0 or instance.skill_level > 5:
         raise ValidationError(
             f'Invalid skill_level. Valid values are 1-5. Received {instance.skill_level}',

@@ -1,5 +1,5 @@
 """View module for handling requests about events"""
-from django.contrib.auth.models import User
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
 from rest_framework import status
@@ -13,7 +13,7 @@ from levelupapi.models import Game, Event, Gamer, EventGamers
 class EventUserSerializer(serializers.ModelSerializer):
     """JSON serializer for event organizer's related Django user"""
     class Meta:
-        model = User
+        model = settings.AUTH_USER_MODEL
         fields = ['first_name', 'last_name', 'email']
 
 
@@ -84,7 +84,7 @@ class Events(ViewSet):
             event = Event.objects.get(pk=pk)
             serializer = EventSerializer(event, context={'request': request})
             return Response(serializer.data)
-        except Exception:
+        except Exception as ex:
             return HttpResponseServerError(ex)
 
     def update(self, request, pk=None):
