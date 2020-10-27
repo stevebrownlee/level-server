@@ -14,7 +14,7 @@ class Game(models.Model):
     skill_level = models.IntegerField()
 
 @receiver(pre_save, sender=Game)
-def skill_level_validate(instance):
+def skill_level_validate(instance, **kwargs):
     """Ensure that skill level falls within the acceptable range
 
     Args:
