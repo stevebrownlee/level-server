@@ -1,3 +1,4 @@
+"""Game DB Model Module"""
 from django.core.exceptions import ValidationError
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
@@ -13,7 +14,42 @@ class Game(models.Model):
     number_of_players = models.IntegerField()
     skill_level = models.IntegerField()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @receiver(pre_save, sender=Game)
+# pylint: disable=unused-argument
 def skill_level_validate(instance, **kwargs):
     """Ensure that skill level falls within the acceptable range
 

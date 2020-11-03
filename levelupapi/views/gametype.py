@@ -6,21 +6,6 @@ from rest_framework import serializers
 from levelupapi.models import GameType
 
 
-class GameTypeSerializer(serializers.HyperlinkedModelSerializer):
-    """JSON serializer for game types
-
-    Arguments:
-        serializers
-    """
-    class Meta:
-        model = GameType
-        url = serializers.HyperlinkedIdentityField(
-            view_name='gametype',
-            lookup_field='id'
-        )
-        fields = ('id', 'url', 'label')
-
-
 class GameTypes(ViewSet):
     """Level up games"""
 
@@ -32,7 +17,8 @@ class GameTypes(ViewSet):
         """
         try:
             game_type = GameType.objects.get(pk=pk)
-            serializer = GameTypeSerializer(game_type, context={'request': request})
+            serializer = GameTypeSerializer(
+                game_type, context={'request': request})
             return Response(serializer.data)
         except Exception as ex:
             return HttpResponseServerError(ex)
@@ -48,3 +34,18 @@ class GameTypes(ViewSet):
         serializer = GameTypeSerializer(
             gametypes, many=True, context={'request': request})
         return Response(serializer.data)
+
+
+class GameTypeSerializer(serializers.HyperlinkedModelSerializer):
+    """JSON serializer for game types
+
+    Arguments:
+        serializers
+    """
+    class Meta:
+        model = GameType
+        url = serializers.HyperlinkedIdentityField(
+            view_name='gametype',
+            lookup_field='id'
+        )
+        fields = ('id', 'url', 'label')

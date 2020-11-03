@@ -1,7 +1,7 @@
 """View module for handling requests about events"""
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
+from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
@@ -13,7 +13,7 @@ from levelupapi.models import Game, Event, Gamer, EventGamers
 class EventUserSerializer(serializers.ModelSerializer):
     """JSON serializer for event organizer's related Django user"""
     class Meta:
-        model = settings.AUTH_USER_MODEL
+        model = get_user_model()
         fields = ['first_name', 'last_name', 'email']
 
 
@@ -163,6 +163,7 @@ class Events(ViewSet):
             try:
                 registration = EventGamers.objects.get(
                     event=event, gamer=gamer)
+
                 return Response(
                     {'message': 'Gamer already signed up this event.'},
                     status=status.HTTP_422_UNPROCESSABLE_ENTITY
