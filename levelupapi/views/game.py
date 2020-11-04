@@ -8,6 +8,15 @@ from rest_framework import serializers
 from levelupapi.models import Game, GameType, Gamer
 
 
+#####################################
+##                                 ##
+##           Your new              ##
+##       games/request.py          ##
+##                                 ##
+#####################################
+
+
+
 class Games(ViewSet):
     """Level up games"""
 
@@ -20,19 +29,28 @@ class Games(ViewSet):
         gamer = Gamer.objects.get(user=request.auth.user)
 
         game = Game()
-        game.title = request.data["title"]
-        game.maker = request.data["maker"]
-        game.number_of_players = request.data["numberOfPlayers"]
-        game.skill_level = request.data["skillLevel"]
+
+        try:
+            game.title = request.data["title"]
+            game.maker = request.data["maker"]
+            game.number_of_players = request.data["numberOfPlayers"]
+            game.skill_level = request.data["skillLevel"]
+        except KeyError as ex:
+            return Response({'message': 'Incorrect key was sent in request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
         game.gamer = gamer
 
-        gametype = GameType.objects.get(pk=request.data["gameTypeId"])
-        game.gametype = gametype
+        try:
+            gametype = GameType.objects.get(pk=request.data["gameTypeId"])
+            game.gametype = gametype
+        except GameType.DoesNotExist as ex:
+            return Response({'message': 'Game type provided is not valid'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             game.save()
             serializer = GameSerializer(game, context={'request': request})
-            return Response(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -94,12 +112,8 @@ class Games(ViewSet):
         Returns:
             Response -- JSON serialized list of games
         """
+        # SELECT * FROM levelupapi_game;
         games = Game.objects.all()
-
-        # Support filtering games by type
-        game_type = self.request.query_params.get('type', None)
-        if game_type is not None:
-            games = games.filter(gametype__id=game_type)
 
         serializer = GameSerializer(
             games, many=True, context={'request': request})
