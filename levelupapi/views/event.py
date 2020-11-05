@@ -148,15 +148,30 @@ class Events(ViewSet):
             events, many=True, context={'request': request})
         return Response(serializer.data)
 
+
     @action(methods=['get', 'post', 'delete'], detail=True)
-    def signup(self, request, pk=None):
+    def signup(self, request, pk):
         """Managing gamers signing up for events"""
 
         if request.method == "POST":
+            """
+            SELECT *
+            FROM levelupapi_event
+            WHERE
+                id = 2
+            """
             event = Event.objects.get(pk=pk)
             gamer = Gamer.objects.get(user=request.auth.user)
 
             try:
+                """
+                SELECT *
+                FROM levelupapi_eventgamer
+                WHERE
+                    event_id = 2
+                AND
+                    gamer_id = 1
+                """
                 registration = EventGamers.objects.get(
                     event=event, gamer=gamer)
 
