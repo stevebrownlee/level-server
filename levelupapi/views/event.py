@@ -23,7 +23,7 @@ class EventGamerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gamer
-        fields = ['user']
+        fields = ['user', 'full_name']
 
 class GameSerializer(serializers.HyperlinkedModelSerializer):
     """JSON serializer for games"""
@@ -139,13 +139,9 @@ class Events(ViewSet):
             except EventGamers.DoesNotExist:
                 event.joined = False
 
-        # Support filtering events by game
-        game = self.request.query_params.get('gameId', None)
-        if game is not None:
-            events = events.filter(game__id=type)
-
         serializer = EventSerializer(
             events, many=True, context={'request': request})
+
         return Response(serializer.data)
 
 

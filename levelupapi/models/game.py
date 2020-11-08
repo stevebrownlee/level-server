@@ -28,7 +28,7 @@ def skill_level_validate(instance, **kwargs):
     Raises:
         ValidationError: Specified skill level is not acceptable
     """
-    if instance.skill_level < 0 or instance.skill_level > 5:
+    if instance.skill_level is None or instance.skill_level < 0 or instance.skill_level > 5:
         raise ValidationError(
             f'Invalid skill_level. Valid values are 1-5. Received {instance.skill_level}',
             params={'skill_level': instance.skill_level},

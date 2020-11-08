@@ -64,6 +64,10 @@ class Games(ViewSet):
             game = Game.objects.get(pk=pk)
             serializer = GameSerializer(game, context={'request': request})
             return Response(serializer.data)
+
+        except Game.DoesNotExist as ex:
+            return Response({'message': 'Game does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
         except Exception as ex:
             return HttpResponseServerError(ex)
 
