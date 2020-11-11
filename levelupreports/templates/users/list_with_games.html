@@ -1,0 +1,22 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>LevelUp Reports</title>
+  </head>
+  <body>
+    <h1>User Games</h1>
+
+    {% for user in usergame_list %}
+        <h2>{{ user.full_name }}</h2>
+        <ol>
+        {% for game in user.games %}
+        <li>
+            Title: {{ game.title }}
+        </li>
+        {% endfor %}
+        </ol>
+    {% endfor %}
+  </body>
+</html>
