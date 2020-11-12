@@ -10,5 +10,10 @@ class Gamer(models.Model):
 
     @property
     def full_name(self):
+        """Provides full name for a gamer
+
+        Returns:
+            string: Full name of gamer
+        """
         return f"{self.user.first_name} {self.user.last_name}"
 

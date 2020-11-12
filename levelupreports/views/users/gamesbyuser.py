@@ -1,7 +1,7 @@
 import sqlite3
 from django.shortcuts import render
-from levelupapi.models import Game, Gamer
-from ..connection import Connection
+from levelupapi.models import Game
+from levelupreports.views import Connection
 
 
 def usergame_list(request):
@@ -22,32 +22,13 @@ def usergame_list(request):
                     u.first_name || ' ' || u.last_name AS full_name
                 FROM
                     levelupapi_game g
-                INNER JOIN
-                    levelupapi_gamer gr
-                    ON g.gamer_id = gr.id
-                INNER JOIN
-                    auth_user u
-                    ON gr.user_id = u.id
+                JOIN
+                    levelupapi_gamer gr ON g.gamer_id = gr.id
+                JOIN
+                    auth_user u ON gr.user_id = u.id
             """)
 
-            all_user_games = []
             dataset = db_cursor.fetchall()
-
-            """
-            {
-                1: {
-                    "full_name": "kcfcmfk",
-                    "id": 1,
-                    "games": [
-                        {
-                            "id": 1,
-                            "title": "jvioevnofkd"
-                        }
-                    ]
-                }
-            }
-            """
-
             gamers_dict = {}
 
             for row in dataset:
@@ -67,13 +48,13 @@ def usergame_list(request):
                     gamers_dict[uid]["full_name"] = row["full_name"]
                     gamers_dict[uid]["games"] = [game]
 
+        # Get only the values from the dictionary and create a list from them
+        list_of_user_objects = gamers_dict.values()
 
-        json_response = gamers_dict.values()
-
-
+        # Specify the HTML template and provide data context
         template = 'users/list_with_games.html'
         context = {
-            'usergame_list': json_response
+            'usergame_list': list_of_user_objects
         }
 
         return render(request, template, context)

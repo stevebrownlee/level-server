@@ -11,11 +11,11 @@
     {% for user in usergame_list %}
         <h2>{{ user.full_name }}</h2>
         <ol>
-        {% for game in user.games %}
-        <li>
-            Title: {{ game.title }}
-        </li>
-        {% endfor %}
+            {% for game in user.games %}
+            <li>
+                Title: {{ game.title }}
+            </li>
+            {% endfor %}
         </ol>
     {% endfor %}
   </body>
