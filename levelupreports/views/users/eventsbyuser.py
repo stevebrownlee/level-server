@@ -47,7 +47,7 @@ def event_host_list(request):
             for row in dataset:
                 event = Event()
                 event.id = row["event_id"]
-                event.data = row["date"]
+                event.date = row["date"]
                 event.time = row["time"]
                 event.game_name = row["game_name"]
 

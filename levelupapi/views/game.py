@@ -1,20 +1,11 @@
 """View module for handling requests about park areas"""
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseServerError
-from rest_framework import status
-from rest_framework.viewsets import ViewSet
+from django.db.models import Count, Q
+from levelupapi.models import Game, Gamer, GameType
+from rest_framework import serializers, status
 from rest_framework.response import Response
-from rest_framework import serializers
-from levelupapi.models import Game, GameType, Gamer
-
-
-#####################################
-##                                 ##
-##           Your new              ##
-##       games/request.py          ##
-##                                 ##
-#####################################
-
+from rest_framework.viewsets import ViewSet
 
 
 class Games(ViewSet):
@@ -38,7 +29,6 @@ class Games(ViewSet):
         except KeyError as ex:
             return Response({'message': 'Incorrect key was sent in request'}, status=status.HTTP_400_BAD_REQUEST)
 
-
         game.gamer = gamer
 
         try:
@@ -60,9 +50,19 @@ class Games(ViewSet):
         Returns:
             Response -- JSON serialized game instance
         """
+        gamer = Gamer.objects.get(user=request.auth.user)
+
         try:
-            game = Game.objects.get(pk=pk)
+            game = Game.objects.annotate(
+                event_count=Count('events'),
+                user_event_count=Count(
+                    'events',
+                    filter=Q(events__organizer=gamer)
+                )
+            ).get(pk=pk)
+
             serializer = GameSerializer(game, context={'request': request})
+
             return Response(serializer.data)
 
         except Game.DoesNotExist as ex:
@@ -116,13 +116,19 @@ class Games(ViewSet):
         Returns:
             Response -- JSON serialized list of games
         """
-        # SELECT * FROM levelupapi_game;
-        games = Game.objects.all()
+        gamer = Gamer.objects.get(user=request.auth.user)
+
+        games = Game.objects.annotate(
+            event_count=Count('events'),
+            user_event_count=Count(
+                'events',
+                filter=Q(events__organizer=gamer)
+            )
+        )
 
         serializer = GameSerializer(
             games, many=True, context={'request': request})
         return Response(serializer.data)
-
 
 
 class GamerSerializer(serializers.ModelSerializer):
@@ -140,6 +146,7 @@ class GameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Game
-        fields = ('id', 'title', 'maker', 'gamer',
-                  'number_of_players', 'skill_level', 'gametype')
+        fields = ('id', 'title', 'maker', 'gamer', 'event_count',
+                  'number_of_players', 'skill_level', 'gametype',
+                  'user_event_count',)
         depth = 1
