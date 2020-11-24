@@ -144,6 +144,8 @@ class GameTests(APITestCase):
         """
         Ensure we can delete an existing game.
         """
+
+        # Use the ORM to insert some test data into the database
         game = Game()
         game.gametype_id = 1
         game.skill_level = 5
@@ -153,7 +155,11 @@ class GameTests(APITestCase):
         game.gamer_id = 1
         game.save()
 
+        # Authorize the request
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + self.token)
+
+        # Use the API to delete the test game
+        response = self.client.delete(f"/games/{game.id}")
 
         # GET GAME AGAIN TO VERIFY 404 response
         response = self.client.get(f"/games/{game.id}")
