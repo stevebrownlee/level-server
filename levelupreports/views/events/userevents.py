@@ -1,10 +1,15 @@
-from levelupreports.views.users.eventsbyuser import event_host_list
+"""HTML report"""
 import sqlite3
+from django.http import HttpResponse
+from rest_framework import status
+
 from django.shortcuts import render
-from levelupapi.models import Event, Gamer
+from levelupapi.models import Event
 from levelupreports.views import Connection
 
+
 def event_attendee_list(request):
+    """Respond with HTML report of attendees per event"""
     if request.method == 'GET':
         with sqlite3.connect(Connection.db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -19,7 +24,7 @@ def event_attendee_list(request):
                 u.id AS user_id,
                 u.first_name || " " || u.last_name as user_full_name
             FROM levelupapi_event e
-            JOIN levelupapi_eventgamer eg ON e.id = eg.event_id
+            JOIN levelupapi_eventgamers eg ON e.id = eg.event_id
             JOIN levelupapi_gamer gr ON eg.gamer_id = gr.id
             JOIN auth_user u ON gr.user_id = u.id
             JOIN levelupapi_game g ON e.game_id = g.id
@@ -28,21 +33,19 @@ def event_attendee_list(request):
             dataset = db_cursor.fetchall()
             events_dict = {}
 
-            """
-            {
-                1: {
-                    date:
-                    time:
-                    game_name:
-                    attendees: [
-                        {
-                            gamer_id: 1
-                            full_name: "steve brownlee"
-                        }
-                    ]
-                }
-            }
-            """
+            # {
+            #     1: {
+            #         date:
+            #         time:
+            #         game_name:
+            #         attendees: [
+            #             {
+            #                 gamer_id: 1
+            #                 full_name: "steve brownlee"
+            #             }
+            #         ]
+            #     }
+            # }
 
             for row in dataset:
                 event = Event()
@@ -53,8 +56,8 @@ def event_attendee_list(request):
 
                 attendee_dict = {}
 
-                attendee_dict.user_id = row["user_id"]
-                attendee_dict.full_name = row["user_full_name"]
+                attendee_dict["user_id"] = row["user_id"]
+                attendee_dict["full_name"] = row["user_full_name"]
 
                 if event.id in events_dict:
                     events_dict[event.id]["attendees"].append(attendee_dict)
@@ -74,3 +77,10 @@ def event_attendee_list(request):
         }
 
         return render(request, template, context)
+    else:
+
+        return HttpResponse(
+            None,
+            content_type='text/plain',
+            status=status.HTTP_405_METHOD_NOT_ALLOWED
+        )

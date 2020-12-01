@@ -5,14 +5,6 @@ from rest_framework import routers
 from levelupapi.views import register_user, login_user
 from levelupapi.views import Games, GameTypes, Events, Profile
 
-#####################################
-##                                 ##
-##           Your new              ##
-##      request_handler.py         ##
-##                                 ##
-#####################################
-
-
 # pylint: disable=invalid-name
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'games', Games, 'game')
