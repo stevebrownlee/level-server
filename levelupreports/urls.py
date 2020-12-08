@@ -6,5 +6,6 @@ app_name = "levelupreporting"
 urlpatterns = [
     path('reports/usergames', usergame_list, name='usergames'),
     path('reports/eventusers', event_attendee_list, name='eventuser'),
+    path('reports/games', get_game_list, name='gamelist'),
     path('reports/eventsbyhost', event_host_list, name="eventsbyhost")
 ]

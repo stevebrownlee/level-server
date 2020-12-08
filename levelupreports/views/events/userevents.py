@@ -47,6 +47,7 @@ def event_attendee_list(request):
             #     }
             # }
 
+
             for row in dataset:
                 event = Event()
                 event.id = row["event_id"]
