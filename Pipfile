@@ -12,6 +12,7 @@ pylint = "*"
 djangorestframework = "*"
 django-cors-headers = "*"
 pylint-django = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.8"
