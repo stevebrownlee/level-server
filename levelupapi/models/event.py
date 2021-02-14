@@ -11,6 +11,13 @@ class Event(models.Model):
     date = models.DateField(auto_now=False, auto_now_add=False)
     time = models.TimeField(auto_now=False, auto_now_add=False)
 
+    @property
+    def owner(self):
+        return self.__owner
+
+    @owner.setter
+    def owner(self, value):
+        self.__owner = value
 
     @property
     def attendees(self):

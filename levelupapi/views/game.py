@@ -1,11 +1,12 @@
 """View module for handling requests about park areas"""
 from django.core.exceptions import ValidationError
+from django.db.models.fields import BooleanField
 from django.http import HttpResponseServerError
-from django.db.models import Count, Q
-from levelupapi.models import Game, Gamer, GameType
+from django.db.models import Count, Q, When, Case
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
+from levelupapi.models import Game, Gamer, GameType
 
 
 class Games(ViewSet):
@@ -26,6 +27,9 @@ class Games(ViewSet):
             game.maker = request.data["maker"]
             game.number_of_players = request.data["numberOfPlayers"]
             game.skill_level = request.data["skillLevel"]
+            game.user_event_count = 0
+            game.event_count = 0
+
         except KeyError as ex:
             return Response({'message': 'Incorrect key was sent in request'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -96,7 +100,7 @@ class Games(ViewSet):
         """Handle DELETE requests for a single game
 
         Returns:
-            Response -- 200, 404, or 500 status code
+            Response -- 204, 404, or 500 status code
         """
         try:
             game = Game.objects.get(pk=pk)
@@ -123,8 +127,14 @@ class Games(ViewSet):
             user_event_count=Count(
                 'events',
                 filter=Q(events__organizer=gamer)
+            ),
+            owner=Case(
+                When(gamer=gamer, then=True),
+                default=False,
+                output_field=BooleanField()
             )
         )
+        print(games.query)
 
         serializer = GameSerializer(
             games, many=True, context={'request': request})
@@ -148,5 +158,15 @@ class GameSerializer(serializers.ModelSerializer):
         model = Game
         fields = ('id', 'title', 'maker', 'gamer', 'event_count',
                   'number_of_players', 'skill_level', 'gametype',
-                  'user_event_count',)
+                  'user_event_count', 'owner',)
+        depth = 1
+
+
+class MinimalGameSerializer(serializers.ModelSerializer):
+    """JSON serializer for games"""
+
+    class Meta:
+        model = Game
+        fields = ('id', 'title', 'maker', 'number_of_players',
+                  'skill_level', 'gametype', )
         depth = 1

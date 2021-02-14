@@ -1,9 +1,9 @@
 """View module for handling requests about events"""
 from django.core.exceptions import ValidationError
+from django.db.models.fields import BooleanField
 from django.http import HttpResponseServerError
 from django.contrib.auth import get_user_model
-from django.db.models import Count
-from django.db.models import Q
+from django.db.models import Count, Q, Case, When
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
@@ -104,6 +104,11 @@ class Events(ViewSet):
             joined=Count(
                 'registrations',
                 filter=Q(registrations__gamer=gamer)
+            ),
+            owner=Case(
+                When(organizer=gamer, then=True),
+                default=False,
+                output_field=BooleanField()
             )
         )[:50]
         print(events.query)
@@ -213,4 +218,4 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ('id', 'game', 'organizer',
                   'description', 'date', 'time',
-                  'joined', 'attendees')
+                  'joined', 'attendees', 'owner', )

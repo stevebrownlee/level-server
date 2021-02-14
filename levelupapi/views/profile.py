@@ -1,5 +1,7 @@
 """View module for handling requests about park areas"""
 from django.contrib.auth.models import User
+from django.db.models import Count, Q, Case, When
+from django.db.models.fields import BooleanField
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.viewsets import ViewSet
@@ -18,7 +20,16 @@ class Profile(ViewSet):
             Response -- JSON representation of user info and events
         """
         gamer = Gamer.objects.get(user=request.auth.user)
-        events = Event.objects.filter(registrations__gamer=gamer)
+        events = Event.objects.annotate(
+            owner=Case(
+                When(organizer=gamer, then=True),
+                default=False,
+                output_field=BooleanField()
+            )
+        ).filter(
+            Q(registrations__gamer=gamer) |
+            Q(organizer=gamer)
+        )
 
         events = EventSerializer(
             events, many=True, context={'request': request})
@@ -114,4 +125,4 @@ class EventSerializer(serializers.HyperlinkedModelSerializer):
             view_name='event',
             lookup_field='id'
         )
-        fields = ('id', 'url', 'game', 'description', 'date', 'time')
+        fields = ('id', 'url', 'game', 'description', 'date', 'time', 'owner',)

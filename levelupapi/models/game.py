@@ -17,6 +17,14 @@ class Game(models.Model):
     skill_level = models.IntegerField()
 
     @property
+    def owner(self):
+        return self.__owner
+
+    @owner.setter
+    def owner(self, value):
+        self.__owner = value
+
+    @property
     def event_count(self):
         return self.__event_count
 

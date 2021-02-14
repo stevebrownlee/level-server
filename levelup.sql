@@ -60,12 +60,6 @@ GROUP BY "levelupapi_event"."id",
     "levelupapi_event"."description",
     "levelupapi_event"."date",
     "levelupapi_event"."time";
-
-
-
-
-
-
 SELECT "levelupapi_event"."id",
     "levelupapi_event"."game_id",
     "levelupapi_event"."organizer_id",
@@ -89,3 +83,40 @@ GROUP BY "levelupapi_event"."id",
     "levelupapi_event"."description",
     "levelupapi_event"."date",
     "levelupapi_event"."time"
+;
+
+
+SELECT "levelupapi_game"."id",
+    "levelupapi_game"."gametype_id",
+    "levelupapi_game"."title",
+    "levelupapi_game"."maker",
+    "levelupapi_game"."gamer_id",
+    "levelupapi_game"."number_of_players",
+    "levelupapi_game"."skill_level",
+    COUNT("levelupapi_event"."id") AS "event_count",
+    COUNT(
+        CASE
+            WHEN "levelupapi_event"."organizer_id" = 1 THEN "levelupapi_event"."id"
+            ELSE NULL
+        END
+    ) AS "user_event_count",
+    CASE
+        WHEN "levelupapi_game"."gamer_id" = 1 THEN True
+        ELSE False
+    END AS "owner"
+FROM "levelupapi_game"
+    LEFT OUTER JOIN "levelupapi_event" ON (
+        "levelupapi_game"."id" = "levelupapi_event"."game_id"
+    )
+GROUP BY "levelupapi_game"."id",
+    "levelupapi_game"."gametype_id",
+    "levelupapi_game"."title",
+    "levelupapi_game"."maker",
+    "levelupapi_game"."gamer_id",
+    "levelupapi_game"."number_of_players",
+    "levelupapi_game"."skill_level",
+    CASE
+        WHEN "levelupapi_game"."gamer_id" = 1 THEN True
+        ELSE False
+    END
+;
