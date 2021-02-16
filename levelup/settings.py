@@ -25,7 +25,10 @@ SECRET_KEY = 't=c$1$b_e*%h=sd#@-am_on#1g@h0wx0)w0rqz+zovnjv(67vw'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+   'levelupapi.nss.team',
+   'localhost'
+]
 
 
 # Application definition
@@ -70,7 +73,9 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
-    'http://127.0.0.1:3000'
+    'http://127.0.0.1:3000',
+    'http://levelup.nss.team',
+    'https://levelup.nss.team'
 )
 
 ROOT_URLCONF = 'levelup.urls'
