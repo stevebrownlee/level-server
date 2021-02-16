@@ -8,6 +8,8 @@ FROM levelupapi_event e
     JOIN levelupapi_gamer gr ON e.organizer_id = gr.id
     JOIN auth_user u ON gr.user_id = u.id
     JOIN levelupapi_game g ON e.game_id = g.id;
+
+
 CREATE VIEW USER_EVENTS AS
 SELECT e.id as event_id,
     e.date,
@@ -19,9 +21,13 @@ FROM levelupapi_event e
     JOIN levelupapi_eventgamers eg ON e.id = eg.event_id
     JOIN levelupapi_gamer gr ON eg.gamer_id = gr.id
     JOIN auth_user u ON gr.user_id = u.id
-    JOIN levelupapi_game g ON e.game_id = g.id;
+    JOIN levelupapi_game g ON e.game_id = g.id
+;
+
+
 SELECT *
 FROM USER_EVENTS;
+
 CREATE VIEW USER_EVENT_COUNT AS
 SELECT COUNT(e.id) events,
     u.id AS signed_up_gamer_id,
@@ -36,6 +42,8 @@ SELECT events,
     signed_up_gamer_id,
     user_full_name
 FROM USER_EVENT_COUNT;
+
+
 -- Get all events with number of attendees and if current user is an attendee
 SELECT "levelupapi_event"."id",
     "levelupapi_event"."game_id",

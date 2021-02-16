@@ -115,14 +115,10 @@ class GamerSerializer(serializers.ModelSerializer):
         fields = ('user', 'bio', 'games',)
 
 
-class EventSerializer(serializers.HyperlinkedModelSerializer):
+class EventSerializer(serializers.ModelSerializer):
     """JSON serializer for events"""
     game = GameSerializer(many=False)
 
     class Meta:
         model = Event
-        url = serializers.HyperlinkedIdentityField(
-            view_name='event',
-            lookup_field='id'
-        )
-        fields = ('id', 'url', 'game', 'description', 'date', 'time', 'owner',)
+        fields = ('id', 'game', 'description', 'date', 'time', 'owner',)
