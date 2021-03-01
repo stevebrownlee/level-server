@@ -42,7 +42,7 @@ class Profile(ViewSet):
 
         return Response(profile)
 
-    @action(methods=['get', 'post', 'delete'], detail=True)
+    @action(methods=['post', 'delete'], detail=True)
     def signup(self, request, pk=None):
         """Managing gamers signing up for events"""
 
