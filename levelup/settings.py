@@ -75,7 +75,8 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
     'http://127.0.0.1:3000',
     'http://levelup.nss.team',
-    'https://levelup.nss.team'
+    'https://levelup.nss.team',
+    'https://level-client-pu92u.ondigitalocean.app',
 )
 
 ROOT_URLCONF = 'levelup.urls'
