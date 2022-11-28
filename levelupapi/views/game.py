@@ -1,4 +1,5 @@
 """View module for handling requests about park areas"""
+import re
 from django.core.exceptions import ValidationError
 from django.db.models.fields import BooleanField
 from django.http import HttpResponseServerError
@@ -47,6 +48,8 @@ class Games(ViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         except ValidationError as ex:
             return Response({"reason": ex.message}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError as ex:
+            return Response({"reason": "You passed some bad data"}, status=status.HTTP_400_BAD_REQUEST)
 
     def retrieve(self, request, pk=None):
         """Handle GET requests for single game
@@ -83,16 +86,27 @@ class Games(ViewSet):
         """
         gamer = Gamer.objects.get(user=request.auth.user)
 
+        title = request.data["title"]
+        res = re.compile(r'[@#]')
+
+        if res.findall(title):
+            return Response({"reason": "Invalid character in title"}, status=status.HTTP_400_BAD_REQUEST)
+
+
         game = Game.objects.get(pk=pk)
-        game.title = request.data["title"]
+        game.title = title
         game.maker = request.data["maker"]
         game.number_of_players = request.data["numberOfPlayers"]
         game.skill_level = request.data["skillLevel"]
         game.gamer = gamer
 
-        gametype = GameType.objects.get(pk=request.data["gameTypeId"])
-        game.gametype = gametype
-        game.save()
+        try:
+            gametype = GameType.objects.get(pk=request.data["gameTypeId"])
+            game.gametype = gametype
+
+            game.save()
+        except ValueError:
+            return Response({"reason": "You passed some bad data"}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({}, status=status.HTTP_204_NO_CONTENT)
 

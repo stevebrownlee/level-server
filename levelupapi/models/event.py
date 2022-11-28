@@ -13,6 +13,11 @@ class Event(models.Model):
 
     @property
     def owner(self):
+        """owner property
+
+        Returns:
+            object: Gamer who created the event
+        """
         return self.__owner
 
     @owner.setter
