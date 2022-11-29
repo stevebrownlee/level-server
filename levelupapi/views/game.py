@@ -86,6 +86,7 @@ class Games(ViewSet):
         """
         gamer = Gamer.objects.get(user=request.auth.user)
 
+        # Check for invalid characters in the title
         title = request.data["title"]
         res = re.compile(r'[@#]')
 

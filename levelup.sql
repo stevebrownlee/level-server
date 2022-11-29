@@ -128,3 +128,41 @@ GROUP BY "levelupapi_game"."id",
         ELSE False
     END
 ;
+
+
+
+
+
+
+
+
+
+SELECT "levelupapi_event"."id",
+"levelupapi_event"."game_id",
+"levelupapi_event"."organizer_id",
+"levelupapi_event"."description",
+"levelupapi_event"."date",
+"levelupapi_event"."time",
+COUNT("levelupapi_eventgamers"."id") AS "attendees",
+COUNT(
+    CASE WHEN "levelupapi_eventgamers"."gamer_id" = 1
+    THEN "levelupapi_eventgamers"."id"
+    ELSE NULL END) AS "joined",
+    CASE WHEN "levelupapi_event"."organizer_id" = 1
+    THEN True
+    ELSE False END
+    AS "owner"
+FROM "levelupapi_event"
+LEFT OUTER JOIN "levelupapi_eventgamers"
+ON ("levelupapi_event"."id" = "levelupapi_eventgamers"."event_id")
+GROUP BY "levelupapi_event"."id",
+    "levelupapi_event"."game_id",
+    "levelupapi_event"."organizer_id",
+    "levelupapi_event"."description",
+    "levelupapi_event"."date",
+    "levelupapi_event"."time",
+CASE WHEN "levelupapi_event"."organizer_id" = 1
+    THEN True
+    ELSE False END
+LIMIT 50
+;

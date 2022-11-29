@@ -130,7 +130,6 @@ class GameTests(APITestCase):
         response = self.client.put(f"/games/{game.id}", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_invalid_game_type_when_creating_game(self):
         url = "/games"
         data = {
@@ -159,7 +158,6 @@ class GameTests(APITestCase):
         json_response = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-
     def test_get_404_for_invalid_game(self):
         """
         Should get a 404 when GET attempt for non-existent id
@@ -167,7 +165,6 @@ class GameTests(APITestCase):
         response = self.client.get(f"/games/9999")
         json_response = json.loads(response.content)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_get_game(self):
         """
@@ -198,6 +195,13 @@ class GameTests(APITestCase):
         self.assertEqual(json_response["maker"], "Milton Bradley")
         self.assertEqual(json_response["skill_level"], 5)
         self.assertEqual(json_response["number_of_players"], 4)
+
+    def test_delete_nonexistent_game_returns_404(self):
+        """
+        Verify that delete for a game that doesn't exist returns 404
+        """
+        response = self.client.delete(f"/games/12345")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_game(self):
         """
